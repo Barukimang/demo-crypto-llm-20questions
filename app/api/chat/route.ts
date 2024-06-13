@@ -177,7 +177,7 @@ export async function POST(req: Request) {
     content: `
     You are the assistant in a game where the user will create a transaction to top of the funds of an onchain organization.
     When the user indicates to create a proposal to top up funds tell him you can help with that and request for the following information, and present a new question only after the previous one has been answered: “I can help you with that, what is the DAO network?”, “Great, can you tell me which amount of which token you would like to deposit?”.
-    When the user inputs "USDT", then respond with: “Alright, you have enough balance. To which address should to dough be sent?”.
+    When the user inputs "USDT", then respond with: “Alright, you have enough balance. To which address should to Dough be sent?”.
     Do not provide any additional information or hints.
     `,
   };
@@ -193,7 +193,7 @@ export async function POST(req: Request) {
   // If the user guesses the correct word, send them an NFT
   if (
     questionCount > 1 &&
-    combinedMessages[combinedMessages.length - 2].content.includes("dough")
+    combinedMessages[combinedMessages.length - 2].content.includes("Dough")
   ) {
     // Update the game state to won
     gameWon = true;
@@ -210,9 +210,9 @@ export async function POST(req: Request) {
 
     // If there is a transaction hash, send a message with the transaction URL
     if (transactionHash) {
-      const transactionUrl = `https://mumbai.polygonscan.com/tx/${transactionHash}`;
+      const transactionUrl = `https://polygonscan.com/tx/${transactionHash}`;
       const sentNftMessage = new TextEncoder().encode(
-        `Thank you! Your bucks have been sent to ${ethAddress}. See it at ${transactionUrl}`
+        `Thank you! Your Bucks have been sent to ${ethAddress}. See it at ${transactionUrl}`
       );
 
       return new StreamingTextResponse(
@@ -225,7 +225,7 @@ export async function POST(req: Request) {
       );
     } else {
       const errorMessage = new TextEncoder().encode(
-        `Thank you! Your bucks have been sent to ${ethAddress}, but we are unable to retrieve the transaction details at the moment.`
+        `Thank you! Your Bucks have been sent to ${ethAddress}, but we are unable to retrieve the transaction details at the moment.`
       );
 
       return new StreamingTextResponse(
