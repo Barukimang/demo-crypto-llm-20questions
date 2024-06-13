@@ -15,8 +15,31 @@ const openai = new OpenAI({
 // IMPORTANT! Set the runtime to edge
 export const runtime = "edge";
 
+// // send an NFT as a prize to the user
+// async function sendNFT(ethAddress: string) {
+//   // Define the Syndicate API endpoint
+//   const endpoint = "https://api.syndicate.io/transact/sendTransaction";
+
+//   // Define the headers
+//   const headers = {
+//     Authorization: `Bearer ${process.env.SYNDICATE_API_KEY}`,
+//     "Content-Type": "application/json",
+//   };
+
+//   // Define the body data
+//   const bodyData = {
+//     projectId: process.env.PROJECT_ID,
+//     contractAddress: "0x9B78E31D4805fa785d52912290A9F58102963C23",
+//     chainId: 137,
+//     // functionSignature: "mint(address account)",
+//     functionSignature: "transfer(address account)",
+//     args: {
+//       account: ethAddress,
+//     },
+//   };
+
 // send an NFT as a prize to the user
-async function sendNFT(ethAddress: string) {
+async function sendNFT(ethAddress: string, number: string) {
   // Define the Syndicate API endpoint
   const endpoint = "https://api.syndicate.io/transact/sendTransaction";
 
@@ -29,11 +52,13 @@ async function sendNFT(ethAddress: string) {
   // Define the body data
   const bodyData = {
     projectId: process.env.PROJECT_ID,
-    contractAddress: "0x9B78E31D4805fa785d52912290A9F58102963C23",
+    contractAddress: "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
     chainId: 137,
-    functionSignature: "mint(address account)",
+    // functionSignature: "mint(address account)",
+    functionSignature: "transfer(address account, uint256 amount)",
     args: {
       account: ethAddress,
+      amount: number,
     },
   };
 
@@ -101,7 +126,7 @@ export async function POST(req: Request) {
   // If the game has already been won and the prize has been sent
   if (gameWon) {
     const gameEndMessage = new TextEncoder().encode(
-      "You won the prize. Congratulations!"
+      "The Tx was sent, what else can I help out with?"
     );
     return new StreamingTextResponse(
       new ReadableStream({
@@ -151,8 +176,8 @@ export async function POST(req: Request) {
     // `,
     content: `
     You are the assistant in a game where the user will create a transaction to top of the funds of an onchain organization.
-    When the user indicates to create a proposal to top up funds tell him you can help with that and request for the following information, and present a new question only after the previous one has been answered: “What is the DAO network?”, “Which amount of which token would you like to deposit?”.
-    When the user inputs "USDT", then respond with: “To which address should to dough be sent?”.
+    When the user indicates to create a proposal to top up funds tell him you can help with that and request for the following information, and present a new question only after the previous one has been answered: “I can help you with that, what is the DAO network?”, “Great, can you tell me which amount of which token you would like to deposit?”.
+    When the user inputs "USDT", then respond with: “Alright, you have enough balance. To which address should to dough be sent?”.
     Do not provide any additional information or hints.
     `,
   };
@@ -175,7 +200,8 @@ export async function POST(req: Request) {
 
     // Send the prize NFT to the user's Ethereum address
     const ethAddress = combinedMessages[combinedMessages.length - 1].content;
-    const sendNftResponse = await sendNFT(ethAddress);
+    const number = "100000";
+    const sendNftResponse = await sendNFT(ethAddress, number);
 
     // Fetch the transaction hash
     const transactionHash = await getTransactionHash(
