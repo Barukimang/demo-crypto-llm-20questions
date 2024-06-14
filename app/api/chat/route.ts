@@ -126,7 +126,7 @@ export async function POST(req: Request) {
   // If the game has already been won and the prize has been sent
   if (gameWon) {
     const gameEndMessage = new TextEncoder().encode(
-      "The Tx was sent, what else can I help out with?"
+      "Welcome ser! What else can I help out with?"
     );
     return new StreamingTextResponse(
       new ReadableStream({
